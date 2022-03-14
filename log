@@ -1,0 +1,93 @@
+import sqlite3
+
+
+connection = sqlite3.connect("login.db")
+cursor = connection.cursor()
+cursor.execute("CREATE TABLE IF NOT EXISTS users (username, password)")
+connection.commit()
+connection.close()
+ 
+
+def register():
+    connection = sqlite3.connect("login.db")
+    cursor = connection.cursor()
+    username= input("Podaj login: ")
+    password= input("Podaj hasło: ")
+    cursor.execute('INSERT INTO users VALUES(?,?)',(username,password))
+    print("Zarejestrowałeś się!")
+    connection.commit()
+    connection.close()
+
+def get_users():
+    connection = sqlite3.connect("login.db")
+    cursor = connection.cursor()
+    queryset = cursor.execute("SELECT * FROM users")
+    users = queryset.fetchall()
+    print("Lista użytowników: ", users)
+    connection.close()
+
+def login():
+    connection = sqlite3.connect("login.db")
+    cursor = connection.cursor()
+    username=input("Login: ")
+    queryset=cursor.execute("SELECT password FROM users WHERE username =?",[username])
+    password=queryset.fetchone()
+    passwordTry= input("Hasło: ")
+    
+    if passwordTry==password:
+        print("Zalogowałeś się")
+    else:
+        print("Niepoprawna próba logowania")
+    
+    connection.close()
+
+
+
+def delete():
+    connection = sqlite3.connect("login.db")
+    cursor = connection.cursor()
+    username=input("Podaj login, aby usunąć konto: ")
+    cursor.execute("DELETE FROM users WHERE username= ? ",[username])
+    print("Usunąłeś konto")
+    connection.commit()
+    connection.close()
+
+
+def update():
+    connection = sqlite3.connect("login.db")
+    cursor = connection.cursor()
+    username=input("Podaj swój login:  ")
+    password=input("Podaj nowe hasło: ")
+    cursor.execute("UPDATE users SET password=? WHERE username= ? ",(password,username))
+    print("Hasło zostało zmienione!")
+    connection.commit()
+    connection.close()
+ 
+while True:
+    print('1. Zarejestruj się')
+    print('2. Zobacz użytkowników')
+    print('3. Zaloguj się')
+    print('4. Usuń użytkownika')
+    print('5. Zmodyfikuj użytkownika')
+    print('0. Wyjdź z programu')
+    
+    option = input('Wybierz opcję: ')
+   
+    if option == "1":
+        register()
+    
+    elif option == "2":
+        get_users()
+    
+    elif option == "3":
+        login() 
+    
+    elif option == "4":
+        delete()
+    
+    elif option == "5":
+        update()
+    
+    elif option == "0":
+        break
+ 
